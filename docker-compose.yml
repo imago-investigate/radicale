@@ -4,12 +4,23 @@ services:
     image: ghcr.io/kozea/radicale:stable
     container_name: calendar
     restart: unless-stopped
+    init: true
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - SETUID
+      - SETGID
+      - CHOWN
+      - KILL
     ports:
       - 5232:5232
     volumes:
       - config:/etc/radicale
 # There is a permission issue: Cannot create storage path '/var/lib/radicale/collections' (Permission denied)
-#      - data:/var/lib/radicale
+      - data:/var/lib/radicale
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=proxy"
@@ -25,13 +36,13 @@ volumes:
       type: none
       o: bind
       device: ./config
-#  data:
-#    name: radicale-data
-#    driver: local
-#    driver_opts:
-#      type: none
-#      o: bind
-#      device: ./data
+  data:
+    name: radicale-data
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data
 networks:
   proxy:
     name: "${TRAEFIK_NET_NAME}"

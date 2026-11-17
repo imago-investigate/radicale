@@ -8,7 +8,8 @@ services:
       - 5232:5232
     volumes:
       - config:/etc/radicale
-      - data:/var/lib/radicale/collections
+# There is a permission issue: Cannot create storage path '/var/lib/radicale/collections' (Permission denied)
+#      - data:/var/lib/radicale
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=proxy"
@@ -24,13 +25,13 @@ volumes:
       type: none
       o: bind
       device: ./config
-  data:
-    name: radicale-data
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./data/collections
+#  data:
+#    name: radicale-data
+#    driver: local
+#    driver_opts:
+#      type: none
+#      o: bind
+#      device: ./data
 networks:
   proxy:
     name: "${TRAEFIK_NET_NAME}"

@@ -8,7 +8,7 @@ services:
       - 5232:5232
     volumes:
       - config:/etc/radicale
-      - data:/var/lib/radicale
+      - data:/var/lib/radicale/collections
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=proxy"
@@ -30,7 +30,7 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: ./data
+      device: ./data/collections
 networks:
   proxy:
     name: "${TRAEFIK_NET_NAME}"

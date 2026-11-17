@@ -1,13 +1,19 @@
-name: Radicale
+name: "${COMPOSE_NAME}"
 services:
-    radicale:
-        image: ghcr.io/kozea/radicale:stable
-        ports:
-        - 5232:5232
-        volumes:
-          - config:/etc/radicale
-          - data:/var/lib/radicale
-
+  calendar:
+    image: ghcr.io/kozea/radicale:stable
+    ports:
+      - 5232:5232
+    volumes:
+      - config:/etc/radicale
+      - data:/var/lib/radicale
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.calendar.entrypoints=websecure"
+      - "traefik.http.routers.calendar.rule=Host(`${CALENDAR_SERVER_DOMAIN}`)"
+      - "traefik.http.routers.calendar.service=calendar"
+      - "traefik.http.services.calendar.loadbalancer.server.port=5232"
 volumes:
   config:
     name: radicale-config
@@ -23,3 +29,7 @@ volumes:
       type: none
       o: bind
       device: ./data
+networks:
+  proxy:
+    name: "${TRAEFIK_NET_NAME}"
+    driver: bridge
